@@ -57,8 +57,7 @@ function makeCard(card, allowed, interactive) {
   const element = el(interactive ? 'button' : 'div', face, `card ${card.color}`);
   element.setAttribute('aria-label', label);
   if (!interactive) element.setAttribute('role', 'img');
-  element.title = label;
-  element.append(el('small', card.color === 'wild' ? 'W' : colors[card.color]));
+  element.title = labels[card.value] || card.value;
   if (interactive) {
     element.type = 'button';
     element.disabled = !allowed;
@@ -100,11 +99,14 @@ function render() {
     item.append(el('span', name), el('span', `${player.wins}승${playing ? ` · ${player.count}장` : ''}`));
     return item;
   }));
-  byId('rules').replaceChildren(...(state.rules.length ? state.rules.map((rule) => {
+  byId('rules-heading').textContent = playing ? '이번 라운드의 추가 규칙' : '추가 규칙 후보';
+  const ruleCards = state.rules.map((rule) => {
     const item = el('div', undefined, 'rule');
     item.append(el('strong', rule.name), el('p', rule.description));
     return item;
-  }) : [el('p', '라운드 시작 시 무작위로 2개가 공개됩니다.')]));
+  });
+  if (!playing) ruleCards.unshift(el('p', '라운드를 시작하면 아래 규칙 중 2개가 무작위로 적용됩니다.'));
+  byId('rules').replaceChildren(...ruleCards);
   byId('events').replaceChildren(...state.events.map((event) => el('li', event)));
   if (!playing) {
     byId('uno').checked = false;

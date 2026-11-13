@@ -264,7 +264,8 @@ class Room:
             "round": self.round, "you": player.id, "host": self.players[0].id,
             "players": [{"id": member.id, "name": member.name, "wins": member.wins,
                          "count": len(member.hand) if playing else None} for member in self.players],
-            "rules": [{"key": key, "name": RULES[key][0], "description": RULES[key][1]} for key in self.rules],
+            "rules": [{"key": key, "name": RULES[key][0], "description": RULES[key][1]}
+                      for key in (self.rules if playing else RULES)],
             "hand": [vars(card) for card in player.hand] if playing else [],
             "top": vars(self.pile[-1]) if playing else None, "color": self.color,
             "turn": current.id if current else None, "direction": self.direction,
